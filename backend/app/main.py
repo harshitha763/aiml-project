@@ -2,8 +2,10 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from pathlib import Path
 
 from app.core.config import settings
 from app.core.database import init_db
@@ -83,3 +85,31 @@ def config_status():
         "is_transcription_configured": settings.is_transcription_configured,
         "demo_mode": settings.DEMO_MODE,
     }
+
+
+# ── Serve the built frontend SPA (single-service deployment) ───────────────
+# When the frontend has been built (frontend/dist exists), serve it from the
+# same origin as the API so the whole app runs as one service with no CORS.
+# backend/app/main.py -> parents[2] is the repository root.
+_FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+
+if _FRONTEND_DIST.is_dir():
+    @app.get("/{full_path:path}")
+    async def _serve_spa(full_path: str):
+        # Never intercept API routes
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="Not found")
+        # Serve a real static file if it exists and stays within dist
+        if full_path:
+            candidate = (_FRONTEND_DIST / full_path).resolve()
+            try:
+                candidate.relative_to(_FRONTEND_DIST)
+                if candidate.is_file():
+                    return FileResponse(candidate)
+            except ValueError:
+                pass  # path escaped dist; ignore
+        # Fallback to the SPA shell for client-side routing
+        index = _FRONTEND_DIST / "index.html"
+        if index.is_file():
+            return FileResponse(index)
+        raise HTTPException(status_code=404, detail="Frontend build not found")

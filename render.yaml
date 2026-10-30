@@ -1,10 +1,13 @@
 services:
-  # ── Backend API ──────────────────────────────────────────────────────────
+  # ── Single combined service: FastAPI backend + served React SPA ───────────
+  # One service serves the API (/api/*) and the built frontend (everything
+  # else falls back to index.html for client-side routing). Same origin means
+  # no CORS, no second service, and no subdomain collisions.
   - type: web
-    name: intellimeet-api-h763
+    name: intellimeet-api
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: cd ../frontend && npm ci && npm run build && cd ../backend && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: SECRET_KEY
@@ -17,27 +20,11 @@ services:
         value: ./storage/uploads
       - key: MAX_UPLOAD_SIZE_MB
         value: "50"
+      # Same-origin (frontend served by this service), so CORS only needs to
+      # allow the local dev server.
       - key: BACKEND_CORS_ORIGINS
-        value: '["https://intellimeet-app-h763.onrender.com","http://localhost:5173"]'
+        value: '["http://localhost:5173"]'
       - key: OPENAI_API_KEY
         value: ""
       - key: GROQ_API_KEY
         value: ""
-
-  # ── Frontend (static SPA) ──────────────────────────────────────────────────
-  # Render requires `runtime: static` for static sites (not `node`).
-  # Unique name (-h763) avoids global subdomain collisions and the
-  # cannot-flip-runtime-in-place limitation.
-  - type: web
-    name: intellimeet-app-h763
-    runtime: static
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://intellimeet-api-h763.onrender.com
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
