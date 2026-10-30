@@ -25,6 +25,8 @@ import { StudyPlanner } from './pages/StudyPlanner'
 import { MeetingMinutes } from './pages/MeetingMinutes'
 import { KeyTerms } from './pages/KeyTerms'
 import { RevisionHub } from './pages/RevisionHub'
+import { TranscriptTimeline } from './pages/TranscriptTimeline'
+import { ActionDashboard } from './pages/ActionDashboard'
 import { Resume } from './pages/Resume'
 import { NotFound } from './pages/NotFound'
 import { configApi, authApi, isLoggedIn, setToken, logout } from './services/api'
@@ -95,6 +97,8 @@ export default function App() {
         <Route path="/minutes" element={<MeetingMinutes />} />
         <Route path="/key-terms" element={<KeyTerms />} />
         <Route path="/revision" element={<RevisionHub />} />
+        <Route path="/timeline" element={<TranscriptTimeline />} />
+        <Route path="/actions" element={<ActionDashboard />} />
         <Route path="/resume" element={<Resume />} />
       </Route>
 

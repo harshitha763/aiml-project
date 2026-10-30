@@ -4,7 +4,7 @@ import {
   LayoutDashboard, CalendarDays, GraduationCap, Users, Upload,
   Layers, HelpCircle, Search, StickyNote, BarChart3, Settings as SettingsIcon,
   Menu, X, LogOut, Sparkles, Bell, Zap, Plus, FileText, Hash, Timer,
-  BookMarked, BookOpen,
+  BookMarked, BookOpen, AudioLines, ListTodo,
 } from 'lucide-react'
 import { Logo } from '../components/Logo'
 import type { AppConfig, User } from '../types'
@@ -25,6 +25,8 @@ const navItems = [
   { to: '/assistant', label: 'AI Assistant', icon: Sparkles, color: 'text-purple-400', bg: 'bg-purple-500/10' },
   { to: '/search', label: 'Search', icon: Search, color: 'text-green-400', bg: 'bg-green-500/10' },
   { to: '/notes', label: 'Notes', icon: StickyNote, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  { to: '/timeline', label: 'Transcript Timeline', icon: AudioLines, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+  { to: '/actions', label: 'Action Dashboard', icon: ListTodo, color: 'text-orange-400', bg: 'bg-orange-500/10' },
   { to: '/analytics', label: 'Analytics', icon: BarChart3, color: 'text-rose-400', bg: 'bg-rose-500/10' },
   { to: '/calendar', label: 'Calendar', icon: CalendarDays, color: 'text-red-400', bg: 'bg-red-500/10' },
   { to: '/settings', label: 'Settings', icon: SettingsIcon, color: 'text-slate-400', bg: 'bg-slate-500/10' },
