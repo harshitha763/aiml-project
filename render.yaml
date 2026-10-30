@@ -1,7 +1,7 @@
 services:
   # ── Backend API ──────────────────────────────────────────────────────────
   - type: web
-    name: intellimeet-api
+    name: intellimeet-api-h763
     runtime: python
     rootDir: backend
     buildCommand: pip install -r requirements.txt
@@ -18,22 +18,25 @@ services:
       - key: MAX_UPLOAD_SIZE_MB
         value: "50"
       - key: BACKEND_CORS_ORIGINS
-        value: '["https://intellimeet-app.onrender.com","http://localhost:5173"]'
+        value: '["https://intellimeet-app-h763.onrender.com","http://localhost:5173"]'
       - key: OPENAI_API_KEY
         value: ""
       - key: GROQ_API_KEY
         value: ""
 
-  # ── Frontend ──────────────────────────────────────────────────────────────
+  # ── Frontend (static SPA) ──────────────────────────────────────────────────
+  # Render requires `runtime: static` for static sites (not `node`).
+  # Unique name (-h763) avoids global subdomain collisions and the
+  # cannot-flip-runtime-in-place limitation.
   - type: web
-    name: intellimeet-app
-    runtime: node
+    name: intellimeet-app-h763
+    runtime: static
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: npm ci && npm run build
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        value: https://intellimeet-api.onrender.com
+        value: https://intellimeet-api-h763.onrender.com
     routes:
       - type: rewrite
         source: /*
